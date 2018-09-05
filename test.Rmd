@@ -1,0 +1,60 @@
+---
+title: "Exponential distribution in R and the Central Limit Theorem"
+author: "Nassuna Catherine"
+date: "September 5, 2018"
+output: html_document
+---
+
+### Overview
+  In this part of the project the exponential distribution in R will be investigated and compared with the Central Limit Theorem(CLT). The CLT states that the distribution of properly normalised averages of iid variables becomes that of a standard normal as the sample size,n increases.Simulation was used to generate the exponential distribution.
+  
+For an exponential distribution with lambda = 0.2,
+  
+```{r,echo=TRUE}
+theoretical_mean<-1/0.2
+theoretical_variance<-1/0.2**2
+```
+
+```{r, echo=FALSE}
+paste("theoretical mean = ", round(theoretical_mean, 2))
+paste("theoretical variance = ", round(theoretical_variance, 2))
+```
+
+#####Consider the distribution(expd) of 1000 random exponentials
+```{r, echo=TRUE}
+expd<-rexp(1000,.2)
+sample_mean<-mean(expd)
+sample_variance<-var(expd)
+hist(expd,main = "Plot of exponential distribution, rexp(1000, .2)")
+legend("topright", legend = c(paste("Sample mean =", round(sample_mean, 2)), paste("sample variance = ", round(sample_variance, 2)))) 
+```
+
+The sample mean and sample variance for 1000 random exponentials are consistent with theoretical mean and theoretical variance
+
+#####Consider the distribution of 1000 averages of 40 exponentials (exp_avs)
+```{r, echo=TRUE}
+exp_avs = NULL 
+for (i in 1:1000) exp_avs = c(exp_avs, mean(rexp(40, .2)))
+a<-mean(exp_avs)
+b<-var(exp_avs)
+hist(exp_avs, main = "Distribution of 1000 averages of 40 exponentials")
+abline(v=a, col="red")
+abline(v=theoretical_mean, col="blue")
+legend("topright", legend = c(paste("Sample mean(red) =", round(a, 2)), paste("Theoretical mean(blue) = ", (theoretical_mean)), paste("Variance =", round(b, 2))))
+```
+
+This distribution is far more Gaussian compared to the original exponential distribution. It has a mean consistent with the theoretical mean. However the variance is much smaller since the distribution is now more Gaussian, reflecting the effect of having larger n as a result of the simulation.
+
+###### When we plot a distribution of 1000 normalized averages of 40 exponentials(mns);
+```{r, echo=TRUE}
+mns = NULL
+for (i in 1:1000) mns = c(mns, (mean(rexp(40, .2))-5)/(5/sqrt(40)))
+d<-mean(mns)
+e<-var(mns)
+hist(mns, prob=TRUE, density = 10, ylab = "Density", main = "Distribution of 1000 Normalized averages of 40 exponentials")
+abline(v=d, col="blue")
+lines(density(mns), col = "black")
+legend("topright", legend = c(paste("mean(blue) =", round(d, 1)), paste("variance = ", round(e, 2))))
+```
+
+The distribution obtained approximates to a bell-shape and it is close to that of a standard normal with mean 0, and variance 1 as shown in the figure. This conforms to the Central Limit Theorem.
